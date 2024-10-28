@@ -3,7 +3,7 @@ const HuntAndHotkey = {
       const HotkeyTarget = document.querySelector('.HotkeyTarget');
       if (!HotkeyTarget) return; // If .HotkeyTarget doesn't exist, exit the function. 
   
-      const links = mainPanel.querySelectorAll('a');
+      const links = HotkeyTarget.querySelectorAll('a');
   
       // Loop through each link. This assigns each key if it's not already assigned.
       for (let i = 0; i < links.length; i++) {
