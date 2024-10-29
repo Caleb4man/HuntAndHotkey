@@ -1,44 +1,79 @@
 const HuntAndHotkey = {
-    assignHotkeysToLinks: function (keyMapping) {
-      const HotkeyTarget = document.querySelector('.HotkeyTarget');
-      if (!HotkeyTarget) return; // If .HotkeyTarget doesn't exist, exit the function. 
+    assignHotkeysToLinksAndButtons: function (keyMapping, format = '[{key}]') {
+      const hotkeyTarget = document.querySelector(".HotkeyTarget");
+      if (!hotkeyTarget) return;
   
-      const links = HotkeyTarget.querySelectorAll('a');
+      const elements = hotkeyTarget.querySelectorAll("a, button");
   
-      // Loop through each link. This assigns each key if it's not already assigned.
-      for (let i = 0; i < links.length; i++) {
+      for (let i = 0; i < elements.length; i++) {
         const key = keyMapping[i];
         if (key && !this.isKeyAlreadyAssigned(key)) {
-          this.assignKeyToLink(links[i], key);
+          this.assignKeyToElement(elements[i], key, format);
         }
       }
   
-      // Add an event listener for key presses
-      document.addEventListener('keydown', this.handleKeyPress.bind(this));
+      document.addEventListener("keydown", this.handleKeyPress.bind(this));
+    },
+  
+    assignHotkeysToLinks: function (keyMapping, format = '[{key}]') {
+      const hotkeyTarget = document.querySelector(".HotkeyTarget");
+      if (!hotkeyTarget) return;
+  
+      const links = hotkeyTarget.querySelectorAll("a");
+  
+      for (let i = 0; i < links.length; i++) {
+        const key = keyMapping[i];
+        if (key && !this.isKeyAlreadyAssigned(key)) {
+          this.assignKeyToElement(links[i], key, format);
+        }
+      }
+  
+      document.addEventListener("keydown", this.handleKeyPress.bind(this));
+    },
+  
+    assignHotkeysToButtons: function (keyMapping, format = '[{key}]') {
+      const hotkeyTarget = document.querySelector(".HotkeyTarget");
+      if (!hotkeyTarget) return;
+  
+      const buttons = hotkeyTarget.querySelectorAll("button");
+  
+      for (let i = 0; i < buttons.length; i++) {
+        const key = keyMapping[i];
+        if (key && !this.isKeyAlreadyAssigned(key)) {
+          this.assignKeyToElement(buttons[i], key, format);
+        }
+      }
+  
+      document.addEventListener("keydown", this.handleKeyPress.bind(this));
     },
   
     isKeyAlreadyAssigned: function (key) {
-      return document.querySelector(`a[data-link-key='${key.toLowerCase()}']`) !== null;
+      return document.querySelector(`a[data-link-key='${key.toLowerCase()}']`) !== null ||
+             document.querySelector(`button[data-link-key='${key.toLowerCase()}']`) !== null;
     },
   
-    assignKeyToLink: function (link, key) {
-      // Append the key in square brackets to the link's inner HTML. 
-      // Modify this line if you need them to appear in any other format: 
-      link.innerHTML += ` [${key}]`;
-      link.setAttribute('data-link-key', key.toLowerCase());
+    assignKeyToElement: function (element, key, format) {
+      const formattedKey = format.replace('{key}', key);
+      element.innerHTML += ` ${formattedKey}`;
+      element.setAttribute("data-link-key", key.toLowerCase());
     },
   
     handleKeyPress: function (event) {
-      // Find what key was pressed, and find the corresponding link
       const pressedKey = event.key.toLowerCase();
+      
       const link = document.querySelector(`a[data-link-key='${pressedKey}']`);
+      const button = document.querySelector(`button[data-link-key='${pressedKey}']`);
       
       if (link) {
-        link.click(); // Trigger the link click, which will either follow the link or trigger any other events.
+        link.click();
+      } else if (button) {
+        button.click();
       }
     }
   };
   
-// Example usage, this assigns hotkeys based on a standard US QWERTY keyboard. 
-// HuntAndHotkey.assignHotkeysToLinks('1234567890qwertyuiopasdfghjklzxcvbnm');
+  // Example usage
+  // HuntAndHotkey.assignHotkeysToLinks('1234567890qwertyuiopasdfghjklzxcvbnm');
+  // HuntAndHotkey.assignHotkeysToButtons('1234567890qwertyuiopasdfghjklzxcvbnm', '<{key}>');
+  // HuntAndHotkey.assignHotkeysToLinksAndButtons('1234567890qwertyuiopasdfghjklzxcvbnm', '[{key}]');
   
